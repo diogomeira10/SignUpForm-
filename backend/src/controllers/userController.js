@@ -66,6 +66,7 @@ const userLogin = async (req, res) => {
 const getUser = async (req, res) => {
    
     const token = req.headers.authorization;
+    console.log(token)
 
    
     if (!token) {
@@ -90,10 +91,32 @@ const getUser = async (req, res) => {
 
    
     res.status(200).json({ _id: user._id, email: user.email });
-}
-const getUserById = async (req,res) => {
+
 
 }
+
+
+
+const getUserById = async (req, res) => {
+    const { id } = req.params;
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ message: 'Não foi enviado o token de autenticação!' });
+    }
+
+    const session = await Session.findOne({ token });
+
+    if (!session) {
+        return res.status(403).json({ message: 'Não existe nenhuma sessão com o token indicado!' });
+    }
+
+    const sameUser = session.userId === id;
+
+
+    res.status(200).json({ sameUser });
+};
+
 
 
 
